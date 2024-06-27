@@ -5,14 +5,17 @@ import "react-calendar/dist/Calendar.css";
 import { useState, ChangeEvent } from "react";
 import { DraftExpense, Value } from "../types";
 import ErrorForm from "./ErrorForm";
+import { useBudget } from "../hooks/useBudget";
 
 const ExpenseForm = () => {
-  const [expense, setExpense] = useState<DraftExpense>({
+  const { dispatch } = useBudget();
+  const intialExpenseState = {
     amount: 0,
     expenseName: "",
     category: "",
     date: new Date(),
-  });
+  };
+  const [expense, setExpense] = useState<DraftExpense>(intialExpenseState);
 
   const [error, setError] = useState("");
 
@@ -39,6 +42,10 @@ const ExpenseForm = () => {
       setError("Please fill all fields");
       return;
     }
+
+    // When all validations passed
+
+    dispatch({ type: "ADD_EXPENSE", payload: { expense } });
   };
   return (
     <form action="" onSubmit={(e) => handleSubmit(e)}>
