@@ -4,3 +4,16 @@ export const formatCurrency = (amount: number) => {
     currency: "USD",
   }).format(amount);
 };
+
+export const formatDate = (dateStr: string): string => {
+  const dateObj = new Date(dateStr);
+
+  const opts: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  return new Intl.DateTimeFormat("en-US", opts).format(dateObj);
+};
