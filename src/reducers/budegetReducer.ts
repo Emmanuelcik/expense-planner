@@ -7,18 +7,32 @@ export type BudgetActions =
   | { type: "SHOW_MODAL" }
   | { type: "HIDE_MODAL" }
   | { type: "ADD_EXPENSE"; payload: { expense: DraftExpense } }
-  | { type: "REMOVE_EXPENSE"; payload: { id: Expense["id"] } };
+  | { type: "REMOVE_EXPENSE"; payload: { id: Expense["id"] } }
+  | { type: "GET-EXPENSE-BY-ID"; payload: { id: Expense["id"] } }
+  | { type: "UPDATE-EXPENSE"; payload: { expense: Expense } };
 
 export type BudegtState = {
   budget: number;
   modal: boolean;
   expenses: Expense[];
+  editingId: Expense["id"];
+};
+
+const intialBudget = (): number => {
+  const localStorageBudget = localStorage.getItem("budget");
+  return localStorageBudget ? Number(localStorageBudget) : 0;
+};
+
+const localStorageExpenses = (): Expense[] => {
+  const localStorageExpenses = localStorage.getItem("expenses");
+  return localStorageExpenses ? JSON.parse(localStorageExpenses) : [];
 };
 
 export const initialState: BudegtState = {
-  budget: 0,
+  budget: intialBudget(),
   modal: false,
-  expenses: [],
+  expenses: localStorageExpenses(),
+  editingId: "",
 };
 
 const createExpense = (draftExpense: DraftExpense): Expense => {
@@ -49,6 +63,7 @@ export const budgetReducer = (
     return {
       ...state,
       modal: false,
+      editingId: "",
     };
   }
 
@@ -62,7 +77,6 @@ export const budgetReducer = (
   }
 
   if (action.type === "REMOVE_EXPENSE") {
-    console.log(action.payload);
     return {
       ...state,
       expenses: state.expenses.filter(
@@ -71,5 +85,25 @@ export const budgetReducer = (
     };
   }
 
+  if (action.type === "GET-EXPENSE-BY-ID") {
+    return {
+      ...state,
+      editingId: action.payload.id,
+      modal: true,
+    };
+  }
+
+  if (action.type === "UPDATE-EXPENSE") {
+    return {
+      ...state,
+      expenses: state.expenses.map((expense) =>
+        expense.id === action.payload.expense.id
+          ? action.payload.expense
+          : expense
+      ),
+      modal: false,
+      editingId: "",
+    };
+  }
   return state;
 };

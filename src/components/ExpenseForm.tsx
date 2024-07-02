@@ -2,13 +2,13 @@ import { categories } from "../data/categories";
 import DatePicker from "react-date-picker";
 import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { DraftExpense, Value } from "../types";
 import ErrorForm from "./ErrorForm";
 import { useBudget } from "../hooks/useBudget";
 
 const ExpenseForm = () => {
-  const { dispatch } = useBudget();
+  const { state, dispatch } = useBudget();
   const intialExpenseState = {
     amount: 0,
     expenseName: "",
@@ -16,9 +16,17 @@ const ExpenseForm = () => {
     date: new Date(),
   };
   const [expense, setExpense] = useState<DraftExpense>(intialExpenseState);
-
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (state.editingId) {
+      const editingExpense = state.expenses.filter(
+        (currExpense) => currExpense.id === state.editingId
+      )[0];
+
+      setExpense(editingExpense);
+    }
+  }, [state.editingId]);
   const handleChangeDate = (value: Value) => {
     setExpense({ ...expense, date: value });
   };
@@ -45,12 +53,22 @@ const ExpenseForm = () => {
 
     // When all validations passed
 
-    dispatch({ type: "ADD_EXPENSE", payload: { expense } });
+    if (state.editingId) {
+      const newExpense = { id: state.editingId, ...expense };
+
+      console.log({ newExpense });
+      dispatch({
+        type: "UPDATE-EXPENSE",
+        payload: { expense: newExpense },
+      });
+    } else {
+      dispatch({ type: "ADD_EXPENSE", payload: { expense } });
+    }
   };
   return (
     <form action="" onSubmit={(e) => handleSubmit(e)}>
       <legend className="uppercase text-center text-2xl font-black border-b-4 border-blue-500 py-2 ">
-        New Expense
+        {state.editingId ? "Save Changes" : "New Expense"}
       </legend>
 
       {error && <ErrorForm>{error}</ErrorForm>}
@@ -113,7 +131,7 @@ const ExpenseForm = () => {
       <input
         type="submit"
         className="bg-blue-600 cursor-pointer w-full p-2 text-white uppercase font-bold rounded-lg mt-2"
-        value={"add expense"}
+        value={state.editingId ? "Update Expense" : "Add expense"}
       />
     </form>
   );
