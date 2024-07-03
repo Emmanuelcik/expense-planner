@@ -30,7 +30,7 @@ const ExpenseDetail = ({ expense }: ExpenseDetailProps) => {
     <LeadingActions>
       <SwipeAction
         onClick={() =>
-          dispatch({ type: "GET-EXPENSE-BY-ID", payload: { id: expense.id } })
+          dispatch({ type: "GET_EXPENSE_BY_ID", payload: { id: expense.id } })
         }
       >
         Update

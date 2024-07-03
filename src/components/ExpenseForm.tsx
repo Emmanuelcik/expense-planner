@@ -65,7 +65,7 @@ const ExpenseForm = () => {
 
       console.log({ newExpense });
       dispatch({
-        type: "UPDATE-EXPENSE",
+        type: "UPDATE_EXPENSE",
         payload: { expense: newExpense },
       });
     } else {

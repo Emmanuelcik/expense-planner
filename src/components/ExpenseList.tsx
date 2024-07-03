@@ -15,7 +15,7 @@ const ExpenseList = () => {
   return (
     <div className="bg-white shadow-lg rounded-lg p-10 mt-10">
       {isEmpty ? (
-        <p className="font-bold text-gray-600 text-2xl font-bold">
+        <p className="text-gray-600 text-2xl font-bold">
           {" "}
           There's no expenses
         </p>

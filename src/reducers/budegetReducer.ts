@@ -9,8 +9,8 @@ export type BudgetActions =
   | { type: "HIDE_MODAL" }
   | { type: "ADD_EXPENSE"; payload: { expense: DraftExpense } }
   | { type: "REMOVE_EXPENSE"; payload: { id: Expense["id"] } }
-  | { type: "GET-EXPENSE-BY-ID"; payload: { id: Expense["id"] } }
-  | { type: "UPDATE-EXPENSE"; payload: { expense: Expense } }
+  | { type: "GET_EXPENSE_BY_ID"; payload: { id: Expense["id"] } }
+  | { type: "UPDATE_EXPENSE"; payload: { expense: Expense } }
   | { type: "RESTART_APP" }
   | { type: "FILTER_BY_CATEGORY"; payload: { id: Expense["id"] } };
 
@@ -90,7 +90,7 @@ export const budgetReducer = (
     };
   }
 
-  if (action.type === "GET-EXPENSE-BY-ID") {
+  if (action.type === "GET_EXPENSE_BY_ID") {
     return {
       ...state,
       editingId: action.payload.id,
@@ -98,7 +98,7 @@ export const budgetReducer = (
     };
   }
 
-  if (action.type === "UPDATE-EXPENSE") {
+  if (action.type === "UPDATE_EXPENSE") {
     return {
       ...state,
       expenses: state.expenses.map((expense) =>
