@@ -2,13 +2,13 @@ import { categories } from "../data/categories";
 import DatePicker from "react-date-picker";
 import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, useRef } from "react";
 import { DraftExpense, Value } from "../types";
 import ErrorForm from "./ErrorForm";
 import { useBudget } from "../hooks/useBudget";
 
 const ExpenseForm = () => {
-  const { state, dispatch } = useBudget();
+  const { state, dispatch, available } = useBudget();
   const intialExpenseState = {
     amount: 0,
     expenseName: "",
@@ -16,6 +16,7 @@ const ExpenseForm = () => {
     date: new Date(),
   };
   const [expense, setExpense] = useState<DraftExpense>(intialExpenseState);
+  const moneyRef = useRef(0);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const ExpenseForm = () => {
         (currExpense) => currExpense.id === state.editingId
       )[0];
 
+      moneyRef.current = editingExpense.amount;
       setExpense(editingExpense);
     }
   }, [state.editingId]);
@@ -48,6 +50,11 @@ const ExpenseForm = () => {
 
     if (Object.values(expense).includes("")) {
       setError("Please fill all fields");
+      return;
+    }
+
+    if (expense.amount - moneyRef.current > available) {
+      setError("You don't have enough money");
       return;
     }
 
